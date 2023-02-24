@@ -4,6 +4,7 @@ const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError.js");
 const User = db.user;
 const Role = db.role;
+const Agent = db.agent_config;
 
 const Op = db.Sequelize.Op;
 
@@ -70,5 +71,35 @@ exports.signin = catchAsync(async (req, res, next) => {
     email: user.email,
     roles: authorities,
     accessToken: token,
+  });
+});
+
+exports.addAgentConfig = catchAsync(async (req, res, next) => {
+  // Save agent cofig to Database
+
+  // Site Name        : __________
+  // Site ID               : __________
+  // Frequency        : __________
+  // Username        : __________
+  // Password         : __________
+  // Database IP     : __________
+  // Database Port : __________
+
+  const agent_config = await Agent.create({
+    username: req.body.username,
+    siteName: req.body.siteName,
+    siteID: req.body.siteID,
+    frequency: req.body.frequency,
+    databaseIP: req.body.databaseIP,
+    databasePort: req.body.databasePort,
+    password: bcrypt.hashSync(req.body.password, 8),
+  });
+
+  res.status(201).json({
+    status: "success",
+    message: "Agent config registered successfully!",
+    data: {
+      agent_config,
+    },
   });
 });
